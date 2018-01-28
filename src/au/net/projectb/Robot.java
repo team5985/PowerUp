@@ -3,9 +3,11 @@ package au.net.projectb;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot {
+	TeleopController teleop;
 	
 	@Override
 	public void robotInit() {
+		teleop = new TeleopController();
 	}
 
 	@Override
@@ -18,5 +20,6 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {
+		teleop.run();
 	}
 }

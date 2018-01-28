@@ -1,5 +1,6 @@
 package au.net.projectb;
 
+import au.net.projectb.subsystems.Drivetrain;
 import au.net.projectb.subsystems.Intake;
 import au.net.projectb.subsystems.Lift;
 import au.net.projectb.subsystems.Lift.LiftPosition;
@@ -15,6 +16,7 @@ public class TeleopController {
 	
 	Intake intake;
 	Lift lift;
+	Drivetrain drive;
 	
 	SuperstructureState currentState;
 	
@@ -33,6 +35,7 @@ public class TeleopController {
 		
 		intake = Intake.getInstance();
 		lift = Lift.getInstance();
+		drive = Drivetrain.getInstance();
 	}
 	
 	/**
@@ -116,6 +119,8 @@ public class TeleopController {
 			default:
 				currentState = SuperstructureState.STOWED;
 		}
+		
+//		drive.teleopDrive(); //TODO: Make the robot actually move lmao
 	}
 	
 	/**
