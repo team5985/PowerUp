@@ -1,5 +1,8 @@
 package au.net.projectb;
 
+import au.net.projectb.subsystems.Intake;
+import au.net.projectb.subsystems.Lift;
+import au.net.projectb.subsystems.Lift.LiftPosition;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -9,6 +12,11 @@ import edu.wpi.first.wpilibj.XboxController;
 public class TeleopController {
 	Joystick stick;	// Driver's joystick
 	XboxController xbox;	// Operator's XBox Controller
+	
+	Intake intake;
+	Lift lift;
+	
+	SuperstructureState currentState;
 	
 	private enum SuperstructureState {
 		INTAKING,
@@ -20,12 +28,19 @@ public class TeleopController {
 		MOVING
 	}
 	
+	TeleopController() {
+		currentState = SuperstructureState.STOWED;
+	}
+	
 	/**
 	 * Called by teleopPeriodic in Robot
 	 */
 	void run() {
 		SuperstructureState desiredState = handleInputs();
-		
+		switch (currentState) {
+		case INTAKING:
+			intake.action
+		}
 	}
 	
 	/**

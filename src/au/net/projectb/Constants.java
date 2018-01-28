@@ -29,15 +29,20 @@ public class Constants {
 	public static final int kIntakeClawForward = 6;	// Closed
 	
 	
-	// Intake Wrist Gains
+	// Intake Wrist
 	public static double kPWrist = 0.0;
 	public static double kIWrist = 0.0;
 	public static double kDWrist = 0.0;
 	
-	// Lift Elbow Gains
+	public static double kWristErrorWindow = 0.5; // TODO: Check this
+	public static final double kWristMoveDelay = 0; // Delay from closing the claw to raising the wrist
+	
+	// Lift Elbow
 	public static double kPElbow = 0.0;
 	public static double kIElbow = 0.0;
 	public static double kDElbow = 0.0;
+	
+	public static double kElbowErrorWindow = 0.5; // TODO: Check this
 	
 	// Drive Settings
 	public static double kDriveVoltageRamp = 0.25;
