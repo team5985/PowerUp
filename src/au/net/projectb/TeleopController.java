@@ -30,6 +30,9 @@ public class TeleopController {
 	
 	TeleopController() {
 		currentState = SuperstructureState.STOWED;
+		
+		intake = Intake.getInstance();
+		lift = Lift.getInstance();
 	}
 	
 	/**
@@ -37,9 +40,20 @@ public class TeleopController {
 	 */
 	void run() {
 		SuperstructureState desiredState = handleInputs();
+		
 		switch (currentState) {
-		case INTAKING:
-			intake.action
+			case INTAKING:
+				if (!stick.getRawButton(1)) {
+					if (intake.actionStowFromIntake()) {
+						currentState = SuperstructureState.STOWED;
+					}
+				} else {
+					intake.actionIntakeStandby();
+				}
+				break;
+				
+			case STOWED:
+				intake.actionStow();
 		}
 	}
 	
@@ -78,12 +92,5 @@ public class TeleopController {
 		}
 		
 		return retState;
-	}
-	
-	/**
-	 * Retract arm and raise wrist
-	 */
-	private void stowIntake() {
-		
 	}
 }

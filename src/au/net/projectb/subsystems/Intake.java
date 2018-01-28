@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import au.net.projectb.Constants;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 /**
@@ -15,8 +14,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public class Intake extends Subsystem {
 	private static Intake instance;
 	
-	DoubleSolenoid p_claw;	
-	TalonSRX m_wrist;
+	DoubleSolenoid pClaw;	
+	TalonSRX mWrist;
 	
 	public static Intake getInstance() {
 		if (instance == null) {
@@ -26,13 +25,13 @@ public class Intake extends Subsystem {
 	}
 	
 	private Intake() {
-		p_claw = new DoubleSolenoid(Constants.kIntakeClawReverse, Constants.kIntakeClawForward);
+		pClaw = new DoubleSolenoid(Constants.kIntakeClawReverse, Constants.kIntakeClawForward);
 		
-		m_wrist = new TalonSRX(Constants.kWristMotor);
-		m_wrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
-		m_wrist.config_kP(0, Constants.kPWrist, 0);
-		m_wrist.config_kP(0, Constants.kIWrist, 0);
-		m_wrist.config_kD(0, Constants.kDWrist, 0);
+		mWrist = new TalonSRX(Constants.kWristMotor);
+		mWrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
+		mWrist.config_kP(0, Constants.kPWrist, 0);
+		mWrist.config_kP(0, Constants.kIWrist, 0);
+		mWrist.config_kD(0, Constants.kDWrist, 0);
 	}
 	
 	/**
@@ -40,22 +39,48 @@ public class Intake extends Subsystem {
 	 * @return True when action is complete
 	 */
 	public boolean actionStowFromIntake() {
-		boolean actionComplete = m_wrist.getClosedLoopError(0) < Constants.kWristErrorWindow;
+		boolean actionComplete = mWrist.getClosedLoopError(0) < Constants.kWristErrorWindow;
 		
-		p_claw.set(Value.kForward);
+		pClaw.set(Value.kForward);
 		// mysterious wait timer for Constants.kWristMoveDelay seconds
-		m_wrist.set(ControlMode.Position, 0 /**origin**/);
+		setWristPosition(Constants.kWristUpPosition);
 		
 		return actionComplete;
 	}
 	
 	/**
-	 * Brings the intake down and open
-	 * @return
+	 * Brings the intake down and open.
+	 * @return True if action completed.
 	 */
-	public boolean actionIntake() {
-		p_claw.set(Value.kReverse);
-		m_wrist.set(ControlMode.Position, 1);
-		return m_wrist.getClosedLoopError(1) < Constants.kWristErrorWindow;
+	public boolean actionIntakeStandby() {
+		pClaw.set(Value.kReverse);
+		setWristPosition(Constants.kWristDnPosition);
+		return mWrist.getClosedLoopError(1) < Constants.kWristErrorWindow;
+	}
+	
+	/**
+	 * Keeps the intake up and closed.
+	 * @return True if action completed.
+	 */
+	public boolean actionStow() {
+		pClaw.set(Value.kForward);
+		setWristPosition(Constants.kWristUpPosition);
+		return mWrist.getClosedLoopError(1) < Constants.kWristErrorWindow;
+	}
+	
+	/**
+	 * Get wrist position.
+	 * @return Wrist position.
+	 */
+	public int getWristPosition() {
+		return mWrist.getSelectedSensorPosition(0); //TODO: Find encoder's values at positions. Change this method to return boolean.
+	}
+	
+	private void setWristPosition(int setpoint) {
+		if (Lift.getInstance().getArmIsInIllegalPos()) {
+			mWrist.set(ControlMode.Position, Constants.kWristUpPosition);
+		} else {
+			mWrist.set(ControlMode.Position, setpoint);
+		}
 	}
 }

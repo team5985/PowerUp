@@ -30,6 +30,9 @@ public class Constants {
 	
 	
 	// Intake Wrist
+	public static int kWristUpPosition = 0; // TODO: Check this
+	public static int kWristDnPosition = 1;
+	
 	public static double kPWrist = 0.0;
 	public static double kIWrist = 0.0;
 	public static double kDWrist = 0.0;
@@ -38,11 +41,20 @@ public class Constants {
 	public static final double kWristMoveDelay = 0; // Delay from closing the claw to raising the wrist
 	
 	// Lift Elbow
+	public static int kElbowGroundPosition = 0; // TODO: Check this
+	public static int kElbowSwitchPosition = 1;
+	public static int kElbowScaleLoPosition = 2;
+	public static int kElbowScaleMiPosition = 3;
+	public static int kElbowScaleHiPosition = 4;
+	
 	public static double kPElbow = 0.0;
 	public static double kIElbow = 0.0;
 	public static double kDElbow = 0.0;
 	
 	public static double kElbowErrorWindow = 0.5; // TODO: Check this
+	
+	public static double kElbowIllegalPosLowerBound = 0;
+	public static double kElbowIllegalPosUpperBound = 1;
 	
 	// Drive Settings
 	public static double kDriveVoltageRamp = 0.25;
