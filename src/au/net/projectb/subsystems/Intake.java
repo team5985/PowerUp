@@ -69,6 +69,27 @@ public class Intake extends Subsystem {
 	}
 	
 	/**
+	 * Keeps the intake up and open.
+	 * @return True if action completed.
+	 */
+	public boolean actionOpenWhileStowed() {
+		pClaw.set(Value.kReverse);
+		setWristPosition(Constants.kWristUpPosition);
+		return mWrist.getClosedLoopError(1) < Constants.kWristErrorWindow;
+	}
+	
+	/**
+	 * Brings the intake down, waits, then opens.
+	 * @return True if action completed.
+	 */
+	public boolean actionScoreCube() {
+		setWristPosition(Constants.kWristDnPosition);
+		// wait timer
+		pClaw.set(Value.kReverse);
+		return mWrist.getClosedLoopError(1) < Constants.kWristErrorWindow /* && timer is complete*/;
+	}
+	
+	/**
 	 * Get wrist position.
 	 * @return Wrist position.
 	 */
