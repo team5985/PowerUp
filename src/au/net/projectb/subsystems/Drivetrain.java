@@ -18,7 +18,7 @@ public class Drivetrain extends Subsystem {
 	boolean driveDirectionIsForwards;
 	double throttlePreset;
 	
-	enum ThrottlePreset {
+	public enum ThrottlePreset {
 		ANALOGUE,
 		LOW,
 		MID,

@@ -1,9 +1,11 @@
 package au.net.projectb;
 
 import au.net.projectb.subsystems.Drivetrain;
+import au.net.projectb.subsystems.Drivetrain.ThrottlePreset;
 import au.net.projectb.subsystems.Intake;
 import au.net.projectb.subsystems.Lift;
 import au.net.projectb.subsystems.Lift.LiftPosition;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -120,7 +122,20 @@ public class TeleopController {
 				currentState = SuperstructureState.STOWED;
 		}
 		
-//		drive.teleopDrive(); //TODO: Make the robot actually move lmao
+		// Driver's buttons
+		if (stick.getRawButtonPressed(2)) {
+			drive.reverseDirection();
+		}
+		if (stick.getRawButtonPressed(10)) {
+			drive.setThrottlePreset(ThrottlePreset.LOW);
+		}
+		if (stick.getRawButtonPressed(7)) {
+			drive.setThrottlePreset(ThrottlePreset.MID);
+		}
+		if (stick.getRawButtonPressed(8)) {
+			drive.setThrottlePreset(ThrottlePreset.HIGH);
+		}
+		drive.arcadeDrive(-stick.getY(), -stick.getX(), (-stick.getThrottle() + 1) / 2);
 	}
 	
 	/**
