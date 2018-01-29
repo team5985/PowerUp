@@ -29,6 +29,7 @@ public class Intake extends Subsystem {
 		
 		mWrist = new TalonSRX(Constants.kWristMotor);
 		mWrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
+		mWrist.setSensorPhase(false); // Setting to true reverses sensor reading
 		mWrist.config_kP(0, Constants.kPWrist, 0);
 		mWrist.config_kP(0, Constants.kIWrist, 0);
 		mWrist.config_kD(0, Constants.kDWrist, 0);
@@ -55,7 +56,7 @@ public class Intake extends Subsystem {
 	public boolean actionIntakeStandby() {
 		pClaw.set(Value.kReverse);
 		setWristPosition(Constants.kWristDnPosition);
-		return mWrist.getClosedLoopError(1) < Constants.kWristErrorWindow;
+		return mWrist.getClosedLoopError(0) < Constants.kWristErrorWindow;
 	}
 	
 	/**
@@ -65,7 +66,7 @@ public class Intake extends Subsystem {
 	public boolean actionStow() {
 		pClaw.set(Value.kForward);
 		setWristPosition(Constants.kWristUpPosition);
-		return mWrist.getClosedLoopError(1) < Constants.kWristErrorWindow;
+		return mWrist.getClosedLoopError(0) < Constants.kWristErrorWindow;
 	}
 	
 	/**
@@ -75,7 +76,7 @@ public class Intake extends Subsystem {
 	public boolean actionOpenWhileStowed() {
 		pClaw.set(Value.kReverse);
 		setWristPosition(Constants.kWristUpPosition);
-		return mWrist.getClosedLoopError(1) < Constants.kWristErrorWindow;
+		return mWrist.getClosedLoopError(0) < Constants.kWristErrorWindow;
 	}
 	
 	/**
@@ -86,15 +87,15 @@ public class Intake extends Subsystem {
 		setWristPosition(Constants.kWristDnPosition);
 		// wait timer
 		pClaw.set(Value.kReverse);
-		return mWrist.getClosedLoopError(1) < Constants.kWristErrorWindow /* && timer is complete*/;
+		return mWrist.getClosedLoopError(0) < Constants.kWristErrorWindow /* && timer is complete*/;
 	}
 	
 	/**
 	 * Get wrist position.
-	 * @return Wrist position.
+	 * @return True if wrist is more than halfway down.
 	 */
-	public int getWristPosition() {
-		return mWrist.getSelectedSensorPosition(0); //TODO: Find encoder's values at positions. Change this method to return boolean.
+	public boolean getWristIsDown() {
+		return mWrist.getSelectedSensorPosition(0) > Constants.kWristDnPosition / 2;
 	}
 	
 	private void setWristPosition(int setpoint) {

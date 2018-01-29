@@ -38,6 +38,7 @@ public class Lift extends Subsystem {
 		
 		mElbow = new TalonSRX(Constants.kBobcatMotor);
 		mElbow.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
+		mElbow.setSensorPhase(false); // Setting to true reverses sensor reading
 		mElbow.config_kP(0, Constants.kPElbow, 0);
 		mElbow.config_kP(0, Constants.kIElbow, 0);
 		mElbow.config_kD(0, Constants.kDElbow, 0);
