@@ -2,6 +2,7 @@ package au.net.projectb.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import au.net.projectb.Constants;
@@ -42,6 +43,10 @@ public class Lift extends Subsystem {
 		mElbow.config_kP(0, Constants.kPElbow, 0);
 		mElbow.config_kP(0, Constants.kIElbow, 0);
 		mElbow.config_kD(0, Constants.kDElbow, 0);
+		mElbow.configPeakOutputForward(Constants.kElbowMaxVoltage / 12, 0);
+		mElbow.configPeakOutputReverse(-Constants.kElbowMaxVoltage / 12, 0);
+		mElbow.enableVoltageCompensation(true);
+		mElbow.setNeutralMode(NeutralMode.Coast);
 	}
 	
 	/**
@@ -105,7 +110,7 @@ public class Lift extends Subsystem {
 	 * Wrapper for moving the arm.
 	 * @param setpoint
 	 */
-	private void setElbowPosition(double setpoint) {
+	public void setElbowPosition(double setpoint) {
 		// Possible arm position safety
 		mElbow.set(ControlMode.Position, setpoint);
 	}

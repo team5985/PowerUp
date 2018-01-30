@@ -28,8 +28,7 @@ public class TeleopController {
 		SWITCH,
 		SCALE_LO,
 		SCALE_MI,
-		SCALE_HI,
-		MOVING
+		SCALE_HI
 	}
 	
 	TeleopController() {

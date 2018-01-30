@@ -4,10 +4,12 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot {
 	TeleopController teleop;
+	Tuning tuner;
 	
 	@Override
 	public void robotInit() {
 		teleop = new TeleopController();
+		tuner = new Tuning();
 	}
 
 	@Override
@@ -21,5 +23,10 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		teleop.run();
+	}
+	
+	@Override
+	public void testPeriodic() {
+		tuner.run();
 	}
 }
