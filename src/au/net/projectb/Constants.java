@@ -7,19 +7,19 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
  */
 public class Constants {
 	// CAN ID
-	public static final int kLeftDriveMaster = 0;
-	public static final int kLeftDriveSlaveA = 1;
-	public static final int kLeftDriveSlaveB = 2;
+	public static final int kLeftDriveMaster = 1;
+	public static final int kLeftDriveSlaveA = 2;
+	public static final int kLeftDriveSlaveB = 3;
 	
-	public static final int kRightDriveMaster = 3;
-	public static final int kRightDriveSlaveA = 4;
-	public static final int kRightDriveSlaveB = 5;
+	public static final int kRightDriveMaster = 4;
+	public static final int kRightDriveSlaveA = 5;
+	public static final int kRightDriveSlaveB = 6;
 	
-	public static final int kBobcatMotor = 6;
-	public static final int kWristMotor = 7;
+	public static final int kBobcatMotor = 7;
+	public static final int kWristMotor = 8;
 	
-	public static final int kPdp = 10;
-	public static final int kPcm = 11;
+	public static final int kPdp = 63;
+	public static final int kPcm = 10;
 	
 	// PCM Ports
 	public static final int kBobcatCylinderReverse = 0;

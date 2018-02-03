@@ -1,13 +1,18 @@
 package au.net.projectb;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot {
+	Compressor compressor;
+	
 	TeleopController teleop;
 	Tuning tuner;
 	
 	@Override
 	public void robotInit() {
+		compressor = new Compressor(Constants.kPcm);
+		
 		teleop = new TeleopController();
 		tuner = new Tuning();
 	}
@@ -22,6 +27,7 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {
+		compressor.start();
 		teleop.run();
 	}
 	
