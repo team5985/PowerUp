@@ -37,6 +37,9 @@ public class TeleopController {
 		intake = Intake.getInstance();
 		lift = Lift.getInstance();
 		drive = Drivetrain.getInstance();
+		
+		stick = new Joystick(0);
+		xbox = new XboxController(1);
 	}
 	
 	/**

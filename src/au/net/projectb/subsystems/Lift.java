@@ -114,4 +114,12 @@ public class Lift extends Subsystem {
 		// Possible arm position safety
 		mElbow.set(ControlMode.Position, setpoint);
 	}
+	
+	/**
+	 * For manual control, set power of arm
+	 * @param power
+	 */
+	public void setElbowPower(double power) {
+		mElbow.set(ControlMode.PercentOutput, power);
+	}
 }
