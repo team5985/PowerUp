@@ -53,7 +53,7 @@ public class Constants {
 	public static int kElbowScaleMiPosition = 3;
 	public static int kElbowScaleHiPosition = 6322;
 	
-	public static double kPElbow = 0.0;
+	public static double kPElbow = 0.85;
 	public static double kIElbow = 0.0;
 	public static double kDElbow = 0.0;
 	
