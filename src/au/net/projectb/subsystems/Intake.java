@@ -14,16 +14,16 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
  * Robot's intake system. Intakes, stows, and scores power cubes.
  */
 public class Intake extends Subsystem {
-	private static Intake instance;
+	private static Intake m_IntakeInstance;
 	
 	DoubleSolenoid pClaw;	
 	TalonSRX mWrist;
 	
 	public static Intake getInstance() {
-		if (instance == null) {
-			instance = new Intake();
+		if (m_IntakeInstance == null) {
+			m_IntakeInstance = new Intake();
 		}
-		return instance;
+		return m_IntakeInstance;
 	}
 	
 	private Intake() {
@@ -33,7 +33,7 @@ public class Intake extends Subsystem {
 		mWrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
 		mWrist.setSensorPhase(false); // Setting to true reverses sensor reading
 		mWrist.config_kP(0, Constants.kPWrist, 0);
-		mWrist.config_kP(0, Constants.kIWrist, 0);
+		mWrist.config_kI(0, Constants.kIWrist, 0);
 		mWrist.config_kD(0, Constants.kDWrist, 0);
 		mWrist.configPeakOutputForward(Constants.kWristMaxVoltage / 12, 0);
 		mWrist.configPeakOutputReverse(-Constants.kWristMaxVoltage / 12, 0);

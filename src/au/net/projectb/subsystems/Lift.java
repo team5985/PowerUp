@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
  * Robot's lift system. Travels and holds at a range of heights, as well as extends and retracts. Carries the Intake.
  */
 public class Lift extends Subsystem {
-	private static Lift instance;
+	private static Lift m_LiftInstance;
 	
 	public enum LiftPosition {
 		GROUND,
@@ -28,10 +28,10 @@ public class Lift extends Subsystem {
 	TalonSRX mElbow;
 	
 	public static Lift getInstance() {
-		if (instance == null) {
-			instance = new Lift();
+		if (m_LiftInstance == null) {
+			m_LiftInstance = new Lift();
 		}
-		return instance;
+		return m_LiftInstance;
 	}
 	
 	private Lift() {
@@ -39,9 +39,9 @@ public class Lift extends Subsystem {
 		
 		mElbow = new TalonSRX(Constants.kBobcatMotor);
 		mElbow.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
-		mElbow.setSensorPhase(false); // Setting to true reverses sensor reading
+		mElbow.setInverted(true); // Positive voltage goes down, so reverse output so positive is up. Encoder is also positive up.
 		mElbow.config_kP(0, Constants.kPElbow, 0);
-		mElbow.config_kP(0, Constants.kIElbow, 0);
+		mElbow.config_kI(0, Constants.kIElbow, 0);
 		mElbow.config_kD(0, Constants.kDElbow, 0);
 		mElbow.configPeakOutputForward(Constants.kElbowMaxVoltage / 12, 0);
 		mElbow.configPeakOutputReverse(-Constants.kElbowMaxVoltage / 12, 0);

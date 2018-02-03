@@ -10,7 +10,7 @@ import au.net.projectb.Constants;
  * Makes the robot move.
  */
 public class Drivetrain extends Subsystem {
-	private static Drivetrain instance;
+	private static Drivetrain m_DrivetrainInstance;
 	
 	TalonSRX mLeftMaster, mLeftSlaveA, mLeftSlaveB;
 	TalonSRX mRightMaster, mRightSlaveA, mRightSlaveB;
@@ -26,10 +26,10 @@ public class Drivetrain extends Subsystem {
 	}
 	
 	public static Drivetrain getInstance() {
-		if (instance == null) {
-			instance = new Drivetrain();
+		if (m_DrivetrainInstance == null) {
+			m_DrivetrainInstance = new Drivetrain();
 		}
-		return instance;
+		return m_DrivetrainInstance;
 	}
 	
 	private Drivetrain() {
