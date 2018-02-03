@@ -63,6 +63,7 @@ public class Drivetrain extends Subsystem {
 		mRightMaster.configPeakCurrentLimit(60, 0);
 		mRightMaster.configPeakCurrentDuration(100, 0);
 		mRightMaster.enableCurrentLimit(true);
+		mRightMaster.setInverted(true);
 		
 		mRightMaster.setNeutralMode(Constants.kDriveNeutralMode);
 		mRightSlaveA.setNeutralMode(Constants.kDriveNeutralMode);
@@ -82,7 +83,7 @@ public class Drivetrain extends Subsystem {
 	 * @param throttle
 	 */
 	public void arcadeDrive(double power, double steering, double throttle) {
-		if (throttlePreset != -1.0) {
+		if (throttlePreset != -1) {
 			throttle = throttlePreset;
 		}
 		if (!driveDirectionIsForwards) {
@@ -107,22 +108,22 @@ public class Drivetrain extends Subsystem {
 	 */
 	private void setMotorPower(double left, double right) {
 		mLeftMaster.set(ControlMode.PercentOutput, left);
-		mRightMaster.set(ControlMode.PercentOutput, -right);
+		mRightMaster.set(ControlMode.PercentOutput, right);
 	}
 	
 	public void setThrottlePreset(ThrottlePreset preset) {
 		switch (preset) {
 			case LOW:
-				throttlePreset = 0.3;
+				throttlePreset = 0.4;
 				break;
 			case MID:
-				throttlePreset = 0.6;
+				throttlePreset = 0.75;
 				break;
 			case HIGH:
-				throttlePreset = 0.8;
+				throttlePreset = 1.0;
 				break;
 			default: // Also handles ANALOGUE
-				throttlePreset = -1.0;
+				throttlePreset = -1; // see line 86
 		}
 	}
 }
