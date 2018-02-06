@@ -35,18 +35,26 @@ public class Lift extends Subsystem {
 	}
 	
 	private Lift() {
-		pExtension = new DoubleSolenoid(Constants.kBobcatCylinderReverse, Constants.kBobcatCylinderForward);
+		pExtension = new DoubleSolenoid(Constants.kPcm, Constants.kBobcatCylinderReverse, Constants.kBobcatCylinderForward);
 		
 		mElbow = new TalonSRX(Constants.kBobcatMotor);
 		mElbow.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
 		mElbow.setInverted(true); // Positive voltage goes down, so reverse output so positive is up. Encoder is also positive up.
+		mElbow.enableVoltageCompensation(true);
+		mElbow.setNeutralMode(NeutralMode.Coast);
+		updateConstants();
+	}
+	
+	/**
+	 * Sometimes constants aren't constant, and you want to change them while the robot is running (tuning)
+	 * This method should be called periodically by Tuning so the gains are actually changed, and once at construction to set up initially
+	 */
+	public void updateConstants() {
 		mElbow.config_kP(0, Constants.kPElbow, 0);
 		mElbow.config_kI(0, Constants.kIElbow, 0);
 		mElbow.config_kD(0, Constants.kDElbow, 0);
 		mElbow.configPeakOutputForward(Constants.kElbowMaxVoltage / 12, 0);
 		mElbow.configPeakOutputReverse(-Constants.kElbowMaxVoltage / 12, 0);
-		mElbow.enableVoltageCompensation(true);
-		mElbow.setNeutralMode(NeutralMode.Coast);
 	}
 	
 	/**

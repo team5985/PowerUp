@@ -28,6 +28,7 @@ public class Tuning {
 		SmartDashboard.putNumber("Lift Position", Lift.getInstance().getElbowPosition());
 		
 		// Setting motors
+		Lift.getInstance().updateConstants();
 		Lift.getInstance().setElbowPosition(elbowSetpoint);
 	}
 }

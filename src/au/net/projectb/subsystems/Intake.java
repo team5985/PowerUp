@@ -27,18 +27,26 @@ public class Intake extends Subsystem {
 	}
 	
 	private Intake() {
-		pClaw = new DoubleSolenoid(Constants.kIntakeClawReverse, Constants.kIntakeClawForward);
+		pClaw = new DoubleSolenoid(Constants.kPcm, Constants.kIntakeClawReverse, Constants.kIntakeClawForward);
 		
 		mWrist = new TalonSRX(Constants.kWristMotor);
 		mWrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
 		mWrist.setSensorPhase(false); // Setting to true reverses sensor reading
+		mWrist.enableVoltageCompensation(true);
+		mWrist.setNeutralMode(NeutralMode.Coast);
+		updateConstants();
+	}
+	
+	/**
+	 * Sometimes constants aren't constant, and you want to change them while the robot is running (tuning)
+	 * This method should be called periodically by Tuning so the gains are actually changed, and once at construction to set up initially
+	 */
+	public void updateConstants() {
 		mWrist.config_kP(0, Constants.kPWrist, 0);
 		mWrist.config_kI(0, Constants.kIWrist, 0);
 		mWrist.config_kD(0, Constants.kDWrist, 0);
 		mWrist.configPeakOutputForward(Constants.kWristMaxVoltage / 12, 0);
 		mWrist.configPeakOutputReverse(-Constants.kWristMaxVoltage / 12, 0);
-		mWrist.enableVoltageCompensation(true);
-		mWrist.setNeutralMode(NeutralMode.Coast);
 	}
 	
 	/**
