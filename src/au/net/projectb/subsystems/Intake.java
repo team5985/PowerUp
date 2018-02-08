@@ -30,7 +30,7 @@ public class Intake extends Subsystem {
 		pClaw = new DoubleSolenoid(Constants.kPcm, Constants.kIntakeClawReverse, Constants.kIntakeClawForward);
 		
 		mWrist = new TalonSRX(Constants.kWristMotor);
-		mWrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
+		mWrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
 		mWrist.setSensorPhase(false); // Setting to true reverses sensor reading
 		mWrist.enableVoltageCompensation(true);
 		mWrist.setNeutralMode(NeutralMode.Coast);
@@ -112,11 +112,27 @@ public class Intake extends Subsystem {
 		return mWrist.getSelectedSensorPosition(0) > Constants.kWristDnPosition / 2;
 	}
 	
-	private void setWristPosition(int setpoint) {
+	public void setWristPosition(int setpoint) {
 		if (Lift.getInstance().getArmIsInIllegalPos()) {
 			mWrist.set(ControlMode.Position, Constants.kWristUpPosition);
 		} else {
 			mWrist.set(ControlMode.Position, setpoint);
+		}
+	}
+	
+	/**
+	 * 
+	 * @return Encoder position
+	 */
+	public int getWristPosition() {
+		return mWrist.getSelectedSensorPosition(0);
+	}
+	
+	public void setClawPosition(boolean closed) {
+		if (closed) {
+			pClaw.set(Value.kForward);
+		} else {
+			pClaw.set(Value.kReverse);
 		}
 	}
 }

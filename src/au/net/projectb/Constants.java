@@ -19,32 +19,29 @@ public class Constants {
 	public static final int kWristMotor = 8;
 	
 	public static final int kPdp = 63;
-	public static final int kPcm = 10;
+	public static final int kPcm = 11;
 	
-	// PCM Ports
-	public static final int kBobcatCylinderReverse = 0;
-	public static final int kBobcatCylinderForward = 1;
-	
-	public static final int kIntakeClawReverse = 5;	// Open
-	public static final int kIntakeClawForward = 6;	// Closed
+	// PCM Ports	
+	public static final int kIntakeClawReverse = 0;	// Open
+	public static final int kIntakeClawForward = 1;	// Closed
 	
 	
 	// Intake Wrist
-	// Encoder is on end effector shaft
-	public static int kWristUpPosition = 0; // TODO: Check this
-	public static int kWristDnPosition = 4096;
+	// Encoder is on output shaft. Positive is outwards.
+	public static int kWristUpPosition = 0;
+	public static int kWristDnPosition = 1000;
 	
-	public static double kPWrist = 0.0;
+	public static double kPWrist = 1.2;
 	public static double kIWrist = 0.0;
 	public static double kDWrist = 0.0;
 	
 	public static int kWristErrorWindow = 60; // TODO: Check this
-	public static final double kWristMoveDelay = 0.1; // Delay from moving the claw to moving the wrist (or vice-versa), in seconds
+	public static double kWristMoveDelay = 0.1; // Delay from moving the claw to moving the wrist (or vice-versa), in seconds
 	
-	public static final double kWristMaxVoltage = 12.0;
+	public static double kWristMaxVoltage = 12.0;
 	
 	// Lift Elbow
-	// Has a 84:18 gear reduction after encoder
+	// Has a 84:18 gear reduction after encoder. Positive is outwards.
 	public static int kElbowCountsPerRev = 19115; // Actually 19114.666...
 	
 	public static int kElbowGroundPosition = 0; // TODO: Check this
@@ -53,7 +50,7 @@ public class Constants {
 	public static int kElbowScaleMiPosition = 3;
 	public static int kElbowScaleHiPosition = 6322;
 	
-	public static double kPElbow = 0.85;
+	public static double kPElbow = 0.85; // Theoretical value
 	public static double kIElbow = 0.0;
 	public static double kDElbow = 0.0;
 	

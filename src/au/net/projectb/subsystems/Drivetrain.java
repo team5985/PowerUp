@@ -63,7 +63,7 @@ public class Drivetrain extends Subsystem {
 		mRightMaster.configPeakCurrentLimit(60, 0);
 		mRightMaster.configPeakCurrentDuration(100, 0);
 		mRightMaster.enableCurrentLimit(true);
-		mRightMaster.setInverted(true);
+		// Interestingly enough, this side doesn't need to be reversed...
 		
 		mRightMaster.setNeutralMode(Constants.kDriveNeutralMode);
 		mRightSlaveA.setNeutralMode(Constants.kDriveNeutralMode);
@@ -108,7 +108,11 @@ public class Drivetrain extends Subsystem {
 	 */
 	private void setMotorPower(double left, double right) {
 		mLeftMaster.set(ControlMode.PercentOutput, left);
+		mLeftSlaveA.follow(mLeftMaster);
+		mLeftSlaveB.follow(mLeftMaster);
 		mRightMaster.set(ControlMode.PercentOutput, right);
+		mRightSlaveA.follow(mRightMaster);
+		mRightSlaveB.follow(mRightMaster);
 	}
 	
 	public void setThrottlePreset(ThrottlePreset preset) {
