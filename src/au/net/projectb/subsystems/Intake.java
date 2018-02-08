@@ -14,31 +14,39 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
  * Robot's intake system. Intakes, stows, and scores power cubes.
  */
 public class Intake extends Subsystem {
-	private static Intake instance;
+	private static Intake m_IntakeInstance;
 	
 	DoubleSolenoid pClaw;	
 	TalonSRX mWrist;
 	
 	public static Intake getInstance() {
-		if (instance == null) {
-			instance = new Intake();
+		if (m_IntakeInstance == null) {
+			m_IntakeInstance = new Intake();
 		}
-		return instance;
+		return m_IntakeInstance;
 	}
 	
 	private Intake() {
-		pClaw = new DoubleSolenoid(Constants.kIntakeClawReverse, Constants.kIntakeClawForward);
+		pClaw = new DoubleSolenoid(Constants.kPcm, Constants.kIntakeClawReverse, Constants.kIntakeClawForward);
 		
 		mWrist = new TalonSRX(Constants.kWristMotor);
-		mWrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
+		mWrist.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
 		mWrist.setSensorPhase(false); // Setting to true reverses sensor reading
+		mWrist.enableVoltageCompensation(true);
+		mWrist.setNeutralMode(NeutralMode.Coast);
+		updateConstants();
+	}
+	
+	/**
+	 * Sometimes constants aren't constant, and you want to change them while the robot is running (tuning)
+	 * This method should be called periodically by Tuning so the gains are actually changed, and once at construction to set up initially
+	 */
+	public void updateConstants() {
 		mWrist.config_kP(0, Constants.kPWrist, 0);
-		mWrist.config_kP(0, Constants.kIWrist, 0);
+		mWrist.config_kI(0, Constants.kIWrist, 0);
 		mWrist.config_kD(0, Constants.kDWrist, 0);
 		mWrist.configPeakOutputForward(Constants.kWristMaxVoltage / 12, 0);
 		mWrist.configPeakOutputReverse(-Constants.kWristMaxVoltage / 12, 0);
-		mWrist.enableVoltageCompensation(true);
-		mWrist.setNeutralMode(NeutralMode.Coast);
 	}
 	
 	/**
@@ -104,11 +112,27 @@ public class Intake extends Subsystem {
 		return mWrist.getSelectedSensorPosition(0) > Constants.kWristDnPosition / 2;
 	}
 	
-	private void setWristPosition(int setpoint) {
+	public void setWristPosition(int setpoint) {
 		if (Lift.getInstance().getArmIsInIllegalPos()) {
 			mWrist.set(ControlMode.Position, Constants.kWristUpPosition);
 		} else {
 			mWrist.set(ControlMode.Position, setpoint);
+		}
+	}
+	
+	/**
+	 * 
+	 * @return Encoder position
+	 */
+	public int getWristPosition() {
+		return mWrist.getSelectedSensorPosition(0);
+	}
+	
+	public void setClawPosition(boolean closed) {
+		if (closed) {
+			pClaw.set(Value.kForward);
+		} else {
+			pClaw.set(Value.kReverse);
 		}
 	}
 }

@@ -37,6 +37,9 @@ public class TeleopController {
 		intake = Intake.getInstance();
 		lift = Lift.getInstance();
 		drive = Drivetrain.getInstance();
+		
+		stick = new Joystick(0);
+		xbox = new XboxController(1);
 	}
 	
 	/**
@@ -49,7 +52,6 @@ public class TeleopController {
 			case INTAKING:
 				// State and transition are together
 				lift.actionMoveTo(LiftPosition.GROUND);
-				lift.actionSetExtension(true);
 				if (stick.getRawButton(1)) {
 					intake.actionIntakeStandby();
 				} else {
@@ -62,7 +64,6 @@ public class TeleopController {
 			case STOWED:
 				// State
 				lift.actionMoveTo(LiftPosition.GROUND);
-				lift.actionSetExtension(true);
 				intake.actionStow();
 				// Transition
 				currentState = desiredState;
@@ -71,7 +72,6 @@ public class TeleopController {
 			case SWITCH:
 				// State
 				lift.actionMoveTo(LiftPosition.SWITCH);
-				lift.actionSetExtension(false);
 				if (!stick.getRawButton(1)) {
 					intake.actionStow();
 				} else {
@@ -83,7 +83,6 @@ public class TeleopController {
 			
 			case SCALE_LO:
 				lift.actionMoveTo(LiftPosition.SCALE_LO);
-				lift.actionSetExtension(false); // TODO: Check if this is necessary or possible, but it shouldn't be a problem bc of the safety
 				if (!stick.getRawButton(1)) {
 					intake.actionStow();
 				} else {
@@ -95,7 +94,6 @@ public class TeleopController {
 			
 			case SCALE_MI:
 				lift.actionMoveTo(LiftPosition.SCALE_MI);
-				lift.actionSetExtension(true);
 				if (!stick.getRawButton(1)) {
 					intake.actionStow();
 				} else {
@@ -107,11 +105,10 @@ public class TeleopController {
 			
 			case SCALE_HI:
 				lift.actionMoveTo(LiftPosition.SCALE_HI);
-				lift.actionSetExtension(true); // TODO: Check if this is necessary or possible, but it shouldn't be a problem bc of the safety
 				if (!stick.getRawButton(1)) {
 					intake.actionStow();
 				} else {
-					intake.actionScoreCube();
+					intake.actionOpenWhileStowed();
 				}
 				// Transition
 				currentState = desiredState;
@@ -134,7 +131,7 @@ public class TeleopController {
 		if (stick.getRawButtonPressed(8)) {
 			drive.setThrottlePreset(ThrottlePreset.HIGH);
 		}
-		drive.arcadeDrive(-stick.getY(), -stick.getX(), (-stick.getThrottle() + 1) / 2);
+		drive.arcadeDrive(stick.getX(), -stick.getY(), (-stick.getThrottle() + 1) / 2);
 	}
 	
 	/**
