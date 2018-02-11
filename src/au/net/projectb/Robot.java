@@ -28,8 +28,11 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		compressor.start();
-//		compressor.stop(); // Debugging at this point
-//		teleop.run();
+		teleop.run();
+	}
+	
+	@Override
+	public void testPeriodic() {
 		tuner.run();
 	}
 }
