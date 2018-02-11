@@ -32,10 +32,12 @@ public class Lift extends Subsystem {
 	
 	private Lift() {		
 		mElbow = new TalonSRX(Constants.kBobcatMotor);
-		mElbow.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
-		mElbow.setInverted(true); // Positive voltage goes down, so reverse output so positive is up. Encoder is also positive up.
+		mElbow.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
+		mElbow.setSensorPhase(true);
+		mElbow.setInverted(true); // Positive voltage goes down, so reverse output so positive is up.
 		mElbow.enableVoltageCompensation(true);
-		mElbow.setNeutralMode(NeutralMode.Coast);
+		mElbow.setNeutralMode(NeutralMode.Brake);
+		mElbow.setSelectedSensorPosition(0, 0, 0);
 		updateConstants();
 	}
 	

@@ -19,6 +19,8 @@ public class Intake extends Subsystem {
 	DoubleSolenoid pClaw;	
 	TalonSRX mWrist;
 	
+	int timer;
+	
 	public static Intake getInstance() {
 		if (m_IntakeInstance == null) {
 			m_IntakeInstance = new Intake();
@@ -35,6 +37,8 @@ public class Intake extends Subsystem {
 		mWrist.enableVoltageCompensation(true);
 		mWrist.setNeutralMode(NeutralMode.Coast);
 		updateConstants();
+		
+		timer = -1;
 	}
 	
 	/**
@@ -57,9 +61,19 @@ public class Intake extends Subsystem {
 		boolean actionComplete = mWrist.getClosedLoopError(0) < Constants.kWristErrorWindow;
 		
 		pClaw.set(Value.kForward);
-		// mysterious wait timer for Constants.kWristMoveDelay seconds
-		setWristPosition(Constants.kWristUpPosition);
 		
+		if (timer == -1) {
+			timer = 0;
+		}
+		if (timer >= Constants.kWristMoveDelay) {
+			setWristPosition(Constants.kWristUpPosition);
+		}
+		
+		timer++;
+		
+		if (actionComplete) {
+			timer = -1;
+		}
 		return actionComplete;
 	}
 	
@@ -91,6 +105,11 @@ public class Intake extends Subsystem {
 		pClaw.set(Value.kReverse);
 		setWristPosition(Constants.kWristUpPosition);
 		return mWrist.getClosedLoopError(0) < Constants.kWristErrorWindow;
+	}
+	
+	public void actionIntakeClose() {
+		pClaw.set(Value.kForward);
+		setWristPosition(Constants.kWristDnPosition);
 	}
 	
 	/**

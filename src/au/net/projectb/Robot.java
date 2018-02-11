@@ -29,7 +29,7 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		compressor.start();
 //		compressor.stop(); // Debugging at this point
-//		teleop.run();
-		tuner.run();
+		teleop.run();
+//		tuner.run();
 	}
 }
