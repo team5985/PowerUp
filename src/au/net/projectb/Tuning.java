@@ -2,6 +2,7 @@ package au.net.projectb;
 
 import au.net.projectb.Constants;
 import au.net.projectb.subsystems.*;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -14,9 +15,13 @@ public class Tuning {
 	Joystick stick; 
 	XboxController xbox;
 	
+//	DigitalInput hallEffect;
+	
 	public Tuning() {
 		stick = new Joystick(0);
 		xbox = new XboxController(1);
+		
+//		hallEffect = new DigitalInput(0);
 	}
 	
 	void run() {
@@ -75,5 +80,8 @@ public class Tuning {
 //		// Setting motor
 //		Intake.getInstance().updateConstants();
 //		Intake.getInstance().setWristPosition(wristSetpoint);
+		
+//		// Hall Effect
+//		SmartDashboard.putBoolean("Hall Effect", hallEffect.get());
 	}
 }

@@ -24,7 +24,8 @@ public class TeleopController {
 	
 	private enum SuperstructureState {
 		INTAKING,
-		STOWED
+		STOWED,
+		RAISED
 	}
 	
 	TeleopController() {
@@ -46,30 +47,51 @@ public class TeleopController {
 		
 		switch (currentState) {
 			case INTAKING:
-				// State and transition are together
+				// State
 				if (stick.getRawButton(1)) {
-					if (!stick.getRawButton(3)) {
-						intake.actionIntakeClose();
-					} else {
-						intake.actionIntakeStandby();
-					}
-					
+					intake.actionIntakeStandby();
 				} else {
-					if (intake.actionStowFromIntake()) {
-						currentState = SuperstructureState.STOWED;
-					}
+					intake.actionIntakeClose();
+				}
+				
+				//Transition
+				if (stick.getRawButtonPressed(3)) {
+					currentState = SuperstructureState.STOWED;
+				}
+				if (lift.getArmIsInIllegalPos()) {
+					currentState = SuperstructureState.RAISED;
 				}
 				break;
 				
 			case STOWED:
 				// State
-				if (stick.getRawButton(3)) {
+				if (stick.getRawButton(1)) {
 					intake.actionOpenWhileStowed();
 				} else {
 					intake.actionStow();
 				}
 				// Transition
-				currentState = desiredState;
+				if (stick.getRawButtonPressed(3)) {
+					currentState = SuperstructureState.INTAKING;
+				}
+				if (lift.getArmIsInIllegalPos()) {
+					currentState = SuperstructureState.RAISED;
+				}
+				break;
+				
+			case RAISED:
+				// State
+				if (stick.getRawButton(1)) {
+					intake.actionOpenWhileStowed();
+				} else {
+					intake.actionStow();
+				}
+				// Transition
+				if (lift.getArmIsInIllegalPos()) {
+					currentState = SuperstructureState.RAISED;
+				} else {
+					currentState = SuperstructureState.STOWED;
+				}
 				break;
 				
 			default:

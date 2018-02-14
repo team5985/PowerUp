@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import au.net.projectb.Constants;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
  * Robot's lift system. Travels and holds at a range of heights. Carries the Intake.
@@ -22,6 +23,7 @@ public class Lift extends Subsystem {
 	}
 		
 	TalonSRX mElbow;
+	DigitalInput zeroingHallEffect;
 	
 	public static Lift getInstance() {
 		if (m_LiftInstance == null) {
@@ -30,7 +32,9 @@ public class Lift extends Subsystem {
 		return m_LiftInstance;
 	}
 	
-	private Lift() {		
+	private Lift() {
+		zeroingHallEffect = new DigitalInput(Constants.kElbowZeroHallEffectDioPort);
+		
 		mElbow = new TalonSRX(Constants.kBobcatMotor);
 		mElbow.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
 		mElbow.setSensorPhase(true);
@@ -50,7 +54,7 @@ public class Lift extends Subsystem {
 		mElbow.config_kI(0, Constants.kIElbow, 0);
 		mElbow.config_kD(0, Constants.kDElbow, 0);
 		mElbow.configPeakOutputForward(Constants.kElbowMaxVoltage / 12, 0);
-		mElbow.configPeakOutputReverse(-Constants.kElbowMaxVoltage / 12, 0);
+		mElbow.configPeakOutputReverse(-Constants.kElbowMaxDownwardsVoltage / 12, 0);
 	}
 	
 	/**
@@ -94,19 +98,43 @@ public class Lift extends Subsystem {
 	}
 	
 	/**
-	 * Wrapper for moving the arm.
+	 * Wrapper for moving the arm to an encoder setpoint. Stops moving downwards if already fully down, stops if intake outside 16".
 	 * @param setpoint
 	 */
 	public void setElbowPosition(double setpoint) {
-		// Possible arm position safety
-		mElbow.set(ControlMode.Position, setpoint);
+		// If hall effect is next to magnet, zero encoder
+		if (!zeroingHallEffect.get()) {
+			mElbow.setSelectedSensorPosition(0, 0, 0);
+		}
+		if (Intake.getInstance().getWristIsDown() && getArmIsInIllegalPos()) {
+			mElbow.set(ControlMode.PercentOutput, 0.0);
+		} else {
+			if (setpoint <= 0 && !zeroingHallEffect.get()) {
+				mElbow.set(ControlMode.PercentOutput, 0.0);
+			} else {
+				// Set elbow power
+				mElbow.set(ControlMode.PercentOutput, setpoint);
+			}
+		}
 	}
 	
 	/**
-	 * For manual control, set power of arm
+	 * For manual control, set power of arm. Stops moving downwards if already fully down, stops if intake outside 16".
 	 * @param power
 	 */
 	public void setElbowPower(double power) {
-		mElbow.set(ControlMode.PercentOutput, power);
+		if (!zeroingHallEffect.get()) {
+			mElbow.setSelectedSensorPosition(0, 0, 0);
+		}
+		if (Intake.getInstance().getWristIsDown() && getArmIsInIllegalPos()) {
+			mElbow.set(ControlMode.PercentOutput, 0.0);
+		} else {
+			if (power <= 0 && !zeroingHallEffect.get()) {
+				mElbow.set(ControlMode.PercentOutput, 0.0);
+			} else {
+				// Set elbow power
+				mElbow.set(ControlMode.PercentOutput, power);
+			}
+		}
 	}
 }
