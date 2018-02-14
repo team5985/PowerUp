@@ -7,6 +7,10 @@ import au.net.projectb.subsystems.Lift;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 /**
@@ -19,6 +23,12 @@ public class TeleopController {
 	Intake intake;
 	Lift lift;
 	Drivetrain drive;
+	
+	UsbCamera driveCamera;
+	UsbCamera wristCamera;
+	CvSink driveSink;
+	CvSink wristSink;
+	VideoSink cameraServer;
 	
 	SuperstructureState currentState;
 	
@@ -37,17 +47,31 @@ public class TeleopController {
 		
 		stick = new Joystick(0);
 		xbox = new XboxController(1);
+		
+		driveCamera = CameraServer.getInstance().startAutomaticCapture(0);
+		wristCamera = CameraServer.getInstance().startAutomaticCapture(1);
+		cameraServer = CameraServer.getInstance().getServer();
+		
+		driveSink = new CvSink("DriverCam");
+		driveSink.setSource(driveCamera);
+		driveSink.setEnabled(true);
+		
+		wristSink = new CvSink("DriverCam");
+		wristSink.setSource(wristCamera);
+		wristSink.setEnabled(true);
 	}
 	
 	/**
 	 * Called by teleopPeriodic in Robot
 	 */
 	void run() {
-		SuperstructureState desiredState = handleInputs();
+//		SuperstructureState desiredState = handleInputs();
 		
 		switch (currentState) {
 			case INTAKING:
 				// State
+				cameraServer.setSource(wristCamera);
+				
 				if (stick.getRawButton(1)) {
 					intake.actionIntakeStandby();
 				} else {
@@ -65,11 +89,14 @@ public class TeleopController {
 				
 			case STOWED:
 				// State
+				cameraServer.setSource(driveCamera);
+				
 				if (stick.getRawButton(1)) {
 					intake.actionOpenWhileStowed();
 				} else {
 					intake.actionStow();
 				}
+				
 				// Transition
 				if (stick.getRawButtonPressed(3)) {
 					currentState = SuperstructureState.INTAKING;
@@ -81,11 +108,14 @@ public class TeleopController {
 				
 			case RAISED:
 				// State
+				cameraServer.setSource(driveCamera);
+				
 				if (stick.getRawButton(1)) {
 					intake.actionOpenWhileStowed();
 				} else {
 					intake.actionStow();
 				}
+				
 				// Transition
 				if (lift.getArmIsInIllegalPos()) {
 					currentState = SuperstructureState.RAISED;
@@ -120,6 +150,7 @@ public class TeleopController {
 	/**
 	 * Interprets what state the operators want the robot to be in.
 	 * @return Desired state as read from controller bindings.
+	 * @deprecated
 	 */
 	private SuperstructureState handleInputs() {
 		SuperstructureState retState = SuperstructureState.STOWED;
