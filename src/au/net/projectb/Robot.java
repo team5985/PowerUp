@@ -1,12 +1,16 @@
 package au.net.projectb;
 
+import au.net.projectb.auto.AutoController;
+import au.net.projectb.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
 	Compressor compressor;
 	
 	TeleopController teleop;
+	AutoController auto;
 	Tuning tuner;
 	
 	@Override
@@ -14,15 +18,19 @@ public class Robot extends IterativeRobot {
 		compressor = new Compressor(Constants.kPcm);
 		
 		teleop = new TeleopController();
+		auto = new AutoController();
 		tuner = new Tuning();
 	}
 
 	@Override
 	public void autonomousInit() {
+		auto.init();
 	}
 
 	@Override
 	public void autonomousPeriodic() {
+		SmartDashboard.putNumber("Gyro", Drivetrain.getInstance().getAngle());
+		auto.run();
 	}
 
 	@Override
@@ -31,5 +39,6 @@ public class Robot extends IterativeRobot {
 //		compressor.stop(); // Debugging at this point
 		teleop.run();
 //		tuner.run();
+//		SmartDashboard.putNumber("Gyro", Drivetrain.getInstance().getAngle());
 	}
 }

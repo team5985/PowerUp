@@ -1,10 +1,24 @@
 package au.net.projectb.auto.modes;
 
+import au.net.projectb.auto.AutoController.FieldPosition;
+import au.net.projectb.subsystems.Drivetrain;
 import au.net.projectb.subsystems.Intake;
-import au.net.projectb.subsystems.Lift;
-import au.net.projectb.subsystems.Lift.LiftPosition;
 
 public class Default extends AutoMode {
+	FieldPosition startPosition;
+	FieldPosition switchPosition;
+	FieldPosition scalePosition;
+	
+	/**
+	 * Set the starting position of the auto mode. (Left, Centre, Right)
+	 */
+	@Override
+	public void setFieldPositions(FieldPosition startPos, FieldPosition switchPos, FieldPosition scalePos) {
+		startPosition = startPos;
+		switchPosition = switchPos;
+		scalePosition = scalePos;
+	}
+	
 	/**
 	 * Run a given step in auto iteratively.
 	 */
@@ -14,11 +28,12 @@ public class Default extends AutoMode {
 		switch (stepIndex) {
 			case 0:
 				Intake.getInstance().actionStow();
-				Lift.getInstance().actionMoveTo(LiftPosition.SWITCH);
+				Drivetrain.getInstance().arcadeDrive(0.2, 0.0, 1.0);
 				break;
 				
-			case 1:
-				Intake.getInstance().actionScoreCube();
+			case 1: // Should not be reached
+				Intake.getInstance().actionOpenWhileStowed();
+				Drivetrain.getInstance().arcadeDrive(0, 0, 0);
 				break;
 		}
 		
@@ -33,7 +48,7 @@ public class Default extends AutoMode {
 		
 		switch (stepIndex) {
 			case 0:
-				return Lift.getInstance().actionMoveTo(LiftPosition.SWITCH);
+				return false;
 			default:
 				return false;
 		}

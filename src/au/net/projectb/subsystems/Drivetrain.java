@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import au.net.projectb.Constants;
 
 /**
@@ -14,6 +16,8 @@ public class Drivetrain extends Subsystem {
 	
 	TalonSRX mLeftMaster, mLeftSlaveA, mLeftSlaveB;
 	TalonSRX mRightMaster, mRightSlaveA, mRightSlaveB;
+	
+	AHRS navx;
 	
 	boolean driveDirectionIsForwards;
 	double throttlePreset;
@@ -33,44 +37,49 @@ public class Drivetrain extends Subsystem {
 	}
 	
 	private Drivetrain() {
+		navx = new AHRS(Port.kMXP);
+		navx.reset();
+		
 		// Left Side
 		mLeftMaster = new TalonSRX(Constants.kLeftDriveMaster);	// CIM
 		mLeftSlaveA = new TalonSRX(Constants.kLeftDriveSlaveA);	// CIM
 		mLeftSlaveB = new TalonSRX(Constants.kLeftDriveSlaveB);	// MiniCIM
 		
-		mLeftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
+//		mLeftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
 		mLeftMaster.configOpenloopRamp(Constants.kDriveVoltageRamp, 0);
 		mLeftMaster.configContinuousCurrentLimit(40, 0);
 		mLeftMaster.configPeakCurrentLimit(60, 0);
 		mLeftMaster.configPeakCurrentDuration(100, 0);
 		mLeftMaster.enableCurrentLimit(true);
+//		mLeftMaster.enableVoltageCompensation(true);
 		
 		mLeftMaster.setNeutralMode(Constants.kDriveNeutralMode);
 		mLeftSlaveA.setNeutralMode(Constants.kDriveNeutralMode);
 		mLeftSlaveB.setNeutralMode(Constants.kDriveNeutralMode);
 		
-		mLeftSlaveA.set(ControlMode.Follower, 0);
-		mLeftSlaveB.set(ControlMode.Follower, 0);
+		mLeftSlaveA.set(ControlMode.Follower, 1);
+		mLeftSlaveB.set(ControlMode.Follower, 1);
 		
 		// Right Side
 		mRightMaster = new TalonSRX(Constants.kRightDriveMaster);	// CIM
 		mRightSlaveA = new TalonSRX(Constants.kRightDriveSlaveA);	// CIM
 		mRightSlaveB = new TalonSRX(Constants.kRightDriveSlaveB);	// MiniCIM
 		
-		mRightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
+//		mRightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
 		mRightMaster.configOpenloopRamp(Constants.kDriveVoltageRamp, 0);
 		mRightMaster.configContinuousCurrentLimit(40, 0);
 		mRightMaster.configPeakCurrentLimit(60, 0);
 		mRightMaster.configPeakCurrentDuration(100, 0);
 		mRightMaster.enableCurrentLimit(true);
+//		mRightMaster.enableVoltageCompensation(true);
 		// Interestingly enough, this side doesn't need to be reversed...
 		
 		mRightMaster.setNeutralMode(Constants.kDriveNeutralMode);
 		mRightSlaveA.setNeutralMode(Constants.kDriveNeutralMode);
 		mRightSlaveB.setNeutralMode(Constants.kDriveNeutralMode);
 		
-		mRightSlaveA.set(ControlMode.Follower, 0);
-		mRightSlaveB.set(ControlMode.Follower, 0);
+		mRightSlaveA.set(ControlMode.Follower, 4);
+		mRightSlaveB.set(ControlMode.Follower, 4);
 		
 		driveDirectionIsForwards = true;
 		throttlePreset = -1.0;
@@ -106,7 +115,7 @@ public class Drivetrain extends Subsystem {
 	 * @param left
 	 * @param right
 	 */
-	private void setMotorPower(double left, double right) {
+	public void setMotorPower(double left, double right) {
 		mLeftMaster.set(ControlMode.PercentOutput, left);
 		mLeftSlaveA.follow(mLeftMaster);
 		mLeftSlaveB.follow(mLeftMaster);
@@ -118,16 +127,33 @@ public class Drivetrain extends Subsystem {
 	public void setThrottlePreset(ThrottlePreset preset) {
 		switch (preset) {
 			case LOW:
-				throttlePreset = 0.4;
+				throttlePreset = 0.40;
 				break;
 			case MID:
 				throttlePreset = 0.75;
 				break;
 			case HIGH:
-				throttlePreset = 1.0;
+				throttlePreset = 1.00;
 				break;
 			default: // Also handles ANALOGUE
 				throttlePreset = -1; // see line 86
 		}
 	}
+	
+	public double getAngle() {
+		return navx.getAngle();
+	}
+	
+	public void zeroGyro() {
+		navx.reset();
+	}
+	
+	/**
+	 * Point turn to an absolute gyro angle TODO: Implement gyro and its zeroing
+	 * @param targetAngle
+	 */
+//	public void actionPointTurn(double targetAngle) {
+//		double turnPower = (navx.getAngle() - targetAngle) * Constants.kPPointTurn;
+//		arcadeDrive(0, turnPower, 1);
+//	}
 }

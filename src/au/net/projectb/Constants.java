@@ -31,7 +31,7 @@ public class Constants {
 	// Intake Wrist
 	// Encoder is on output shaft. Positive is outwards.
 	public static int kWristUpPosition = -200;
-	public static int kWristDnPosition = 1100;
+	public static int kWristDnPosition = 1200;
 	
 	public static double kPWrist = 1.2;
 	public static double kIWrist = 0.0;
@@ -47,19 +47,19 @@ public class Constants {
 	public static int kElbowCountsPerRev = 19115; // Actually 19114.666...
 	
 	public static int kElbowGroundPosition = 0;
-	public static int kElbowSwitchPosition = 1;
+	public static int kElbowSwitchPosition = 2000;
 	public static int kElbowScaleLoPosition = 2;
 	public static int kElbowScaleMiPosition = 3;
-	public static int kElbowScaleHiPosition = 4;
+	public static int kElbowScaleHiPosition = 6000;
 	
-	public static double kPElbow = 0.85; // Theoretical value
+	public static double kPElbow = 2.0; // Theoretical value
 	public static double kIElbow = 0.0;
 	public static double kDElbow = 0.0;
 	
 	public static int kElbowErrorWindow = 60; // TODO: Check this
 	
 	public static int kElbowIllegalPosLowerBound = 100;
-	public static int kElbowIllegalPosUpperBound = 9000;
+	public static int kElbowIllegalPosUpperBound = 5000;
 	
 	public static double kElbowMaxVoltage = 12.0; // +/- of 0
 	public static double kElbowMaxDownwardsVoltage = 6.0; // Stops the arm from smashing into the battery
@@ -67,6 +67,8 @@ public class Constants {
 	// Drive Settings
 	public static double kDriveVoltageRamp = 0.125;
 	public static NeutralMode kDriveNeutralMode = NeutralMode.Brake;
+	
+	public static double kPPointTurn = 0.0;
 	
 	// System Attributes
 	public static int kMagEncoderCountsPerRev = 4096;

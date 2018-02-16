@@ -49,6 +49,7 @@ public class TeleopController {
 		xbox = new XboxController(1);
 		
 		driveCamera = CameraServer.getInstance().startAutomaticCapture(0);
+		
 		wristCamera = CameraServer.getInstance().startAutomaticCapture(1);
 		cameraServer = CameraServer.getInstance().getServer();
 		
@@ -70,7 +71,7 @@ public class TeleopController {
 		switch (currentState) {
 			case INTAKING:
 				// State
-				cameraServer.setSource(wristCamera);
+//				cameraServer.setSource(wristCamera);
 				
 				if (stick.getRawButton(1)) {
 					intake.actionIntakeStandby();
@@ -89,7 +90,7 @@ public class TeleopController {
 				
 			case STOWED:
 				// State
-				cameraServer.setSource(driveCamera);
+//				cameraServer.setSource(driveCamera);
 				
 				if (stick.getRawButton(1)) {
 					intake.actionOpenWhileStowed();
@@ -108,7 +109,7 @@ public class TeleopController {
 				
 			case RAISED:
 				// State
-				cameraServer.setSource(driveCamera);
+//				cameraServer.setSource(driveCamera);
 				
 				if (stick.getRawButton(1)) {
 					intake.actionOpenWhileStowed();

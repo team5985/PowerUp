@@ -109,12 +109,7 @@ public class Lift extends Subsystem {
 		if (Intake.getInstance().getWristIsDown() && getArmIsInIllegalPos()) {
 			mElbow.set(ControlMode.PercentOutput, 0.0);
 		} else {
-			if (setpoint <= 0 && !zeroingHallEffect.get()) {
-				mElbow.set(ControlMode.PercentOutput, 0.0);
-			} else {
-				// Set elbow power
-				mElbow.set(ControlMode.PercentOutput, setpoint);
-			}
+			mElbow.set(ControlMode.Position, setpoint);
 		}
 	}
 	
@@ -129,7 +124,7 @@ public class Lift extends Subsystem {
 		if (Intake.getInstance().getWristIsDown() && getArmIsInIllegalPos()) {
 			mElbow.set(ControlMode.PercentOutput, 0.0);
 		} else {
-			if (power <= 0 && !zeroingHallEffect.get()) {
+			if ((power <= 0 && !zeroingHallEffect.get()) || (getElbowPosition() > Constants.kElbowScaleHiPosition)) {
 				mElbow.set(ControlMode.PercentOutput, 0.0);
 			} else {
 				// Set elbow power
