@@ -20,10 +20,14 @@ public class Robot extends IterativeRobot {
 		teleop = new TeleopController();
 		auto = new AutoController();
 		tuner = new Tuning();
-	}
+		
+		SmartDashboard.setDefaultNumber("CAN ID", 1);
+		SmartDashboard.setDefaultNumber("Power", 0);
+		}
 
 	@Override
 	public void autonomousInit() {
+		compressor.start();
 		auto.init();
 	}
 
@@ -40,5 +44,6 @@ public class Robot extends IterativeRobot {
 		teleop.run();
 //		tuner.run();
 //		SmartDashboard.putNumber("Gyro", Drivetrain.getInstance().getAngle());
+//		Drivetrain.getInstance().driveMotor((int) SmartDashboard.getNumber("CAN ID", 1), SmartDashboard.getNumber("Power", 0));
 	}
 }

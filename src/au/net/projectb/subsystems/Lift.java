@@ -15,6 +15,9 @@ public class Lift extends Subsystem {
 	private static Lift m_LiftInstance;
 	
 	public enum LiftPosition {
+		MANUAL,  // Manual %voltage control by the operator
+		PRESET,  // To the preset from the operator
+		
 		GROUND,
 		SWITCH,
 		SCALE_LO,
@@ -24,6 +27,8 @@ public class Lift extends Subsystem {
 		
 	TalonSRX mElbow;
 	DigitalInput zeroingHallEffect;
+	
+	private LiftPosition liftPositionPreset; 
 	
 	public static Lift getInstance() {
 		if (m_LiftInstance == null) {
@@ -42,6 +47,14 @@ public class Lift extends Subsystem {
 		mElbow.enableVoltageCompensation(true);
 		mElbow.setNeutralMode(NeutralMode.Brake);
 		mElbow.setSelectedSensorPosition(0, 0, 0);
+		
+		mElbow.configContinuousCurrentLimit(40, 0);
+		mElbow.configPeakCurrentLimit(50, 0);
+		mElbow.configPeakCurrentDuration(500, 0);
+		mElbow.enableCurrentLimit(true);
+		
+		liftPositionPreset = LiftPosition.MANUAL;
+		
 		updateConstants();
 	}
 	
@@ -79,8 +92,27 @@ public class Lift extends Subsystem {
 			case SCALE_HI:
 				setElbowPosition(Constants.kElbowScaleHiPosition);
 				break;
+			default:
+				break;
 		}
 		return mElbow.getClosedLoopError(0) < Constants.kElbowErrorWindow;
+	}
+	
+	/**
+	 * Called in TeleopController to move to the last position specified by the operator.
+	 * @return
+	 */
+	public boolean actionMoveToPreset() {
+		actionMoveTo(liftPositionPreset);
+		return mElbow.getClosedLoopError(0) < Constants.kElbowErrorWindow;
+	}
+	
+	/**
+	 * Tell the Lift to remember what position to be in.
+	 * @param target
+	 */
+	public void setPositionPreset(LiftPosition target) {
+		liftPositionPreset = target;
 	}
 	
 	/**

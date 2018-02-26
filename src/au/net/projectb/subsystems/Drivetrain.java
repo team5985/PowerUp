@@ -5,7 +5,10 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import au.net.projectb.Constants;
 
 /**
@@ -45,7 +48,7 @@ public class Drivetrain extends Subsystem {
 		mLeftSlaveA = new TalonSRX(Constants.kLeftDriveSlaveA);	// CIM
 		mLeftSlaveB = new TalonSRX(Constants.kLeftDriveSlaveB);	// MiniCIM
 		
-//		mLeftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
+//		mLeftMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		mLeftMaster.configOpenloopRamp(Constants.kDriveVoltageRamp, 0);
 		mLeftMaster.configContinuousCurrentLimit(40, 0);
 		mLeftMaster.configPeakCurrentLimit(60, 0);
@@ -57,15 +60,15 @@ public class Drivetrain extends Subsystem {
 		mLeftSlaveA.setNeutralMode(Constants.kDriveNeutralMode);
 		mLeftSlaveB.setNeutralMode(Constants.kDriveNeutralMode);
 		
-		mLeftSlaveA.set(ControlMode.Follower, 1);
-		mLeftSlaveB.set(ControlMode.Follower, 1);
+		mLeftSlaveA.set(ControlMode.Follower, Constants.kLeftDriveMaster);
+		mLeftSlaveB.set(ControlMode.Follower, Constants.kLeftDriveMaster);
 		
 		// Right Side
 		mRightMaster = new TalonSRX(Constants.kRightDriveMaster);	// CIM
 		mRightSlaveA = new TalonSRX(Constants.kRightDriveSlaveA);	// CIM
 		mRightSlaveB = new TalonSRX(Constants.kRightDriveSlaveB);	// MiniCIM
 		
-//		mRightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
+		mRightMaster.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		mRightMaster.configOpenloopRamp(Constants.kDriveVoltageRamp, 0);
 		mRightMaster.configContinuousCurrentLimit(40, 0);
 		mRightMaster.configPeakCurrentLimit(60, 0);
@@ -78,8 +81,8 @@ public class Drivetrain extends Subsystem {
 		mRightSlaveA.setNeutralMode(Constants.kDriveNeutralMode);
 		mRightSlaveB.setNeutralMode(Constants.kDriveNeutralMode);
 		
-		mRightSlaveA.set(ControlMode.Follower, 4);
-		mRightSlaveB.set(ControlMode.Follower, 4);
+		mRightSlaveA.set(ControlMode.Follower, Constants.kRightDriveMaster);
+		mRightSlaveB.set(ControlMode.Follower, Constants.kRightDriveMaster);
 		
 		driveDirectionIsForwards = true;
 		throttlePreset = -1.0;
@@ -97,10 +100,15 @@ public class Drivetrain extends Subsystem {
 		}
 		if (!driveDirectionIsForwards) {
 			throttle = -throttle;
+			steering = -steering;
 		}
 		double leftPower = (power + steering) * throttle;
 		double rightPower = (power - steering) * throttle;
 		setMotorPower(leftPower, rightPower);
+		
+		SmartDashboard.putNumber("Throttle", throttle);
+		SmartDashboard.putNumber("LeftPower", leftPower);
+		SmartDashboard.putNumber("RightPower", rightPower);
 	}
 	
 	/**
@@ -146,6 +154,32 @@ public class Drivetrain extends Subsystem {
 	
 	public void zeroGyro() {
 		navx.reset();
+	}
+	
+	public void driveMotor(int canID, double power) {
+		switch (canID) {
+		case 1:
+			mLeftMaster.set(ControlMode.PercentOutput, power);
+			break;
+		case 2:
+			mLeftSlaveA.set(ControlMode.PercentOutput, power);
+			break;
+		case 3:
+			mLeftSlaveB.set(ControlMode.PercentOutput, power);
+			break;
+		case 4:
+			mRightMaster.set(ControlMode.PercentOutput, power);
+			break;
+		case 5:
+			mRightSlaveA.set(ControlMode.PercentOutput, power);
+			break;
+		case 6:
+			mRightSlaveB.set(ControlMode.PercentOutput, power);
+			break;
+		default:
+			DriverStation.reportWarning("=== Invalid CAN ID input! ===", false);
+			break;	
+		}
 	}
 	
 	/**

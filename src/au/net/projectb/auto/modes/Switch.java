@@ -43,9 +43,9 @@ public class Switch extends AutoMode {
 						break;
 					case CENTRE:
 						if (switchPosition == FieldPosition.LEFT) {
-							Drivetrain.getInstance().setMotorPower(0.1, -0.5);
+							Drivetrain.getInstance().setMotorPower(0.3, -0.6);
 						} else if (switchPosition == FieldPosition.RIGHT) {
-							Drivetrain.getInstance().setMotorPower(0.5, -0.1);
+							Drivetrain.getInstance().setMotorPower(0.6, -0.3);
 						}
 						break;
 					case RIGHT:
@@ -75,10 +75,10 @@ public class Switch extends AutoMode {
 						break;
 					case CENTRE:
 						if (switchPosition == FieldPosition.LEFT) {
-							Drivetrain.getInstance().setMotorPower(0.5, -0.1);
+							Drivetrain.getInstance().setMotorPower(0.6, -0.1);
 						} else if (switchPosition == FieldPosition.RIGHT) {
 							// do C-R
-							Drivetrain.getInstance().setMotorPower(0.1, -0.5);
+							Drivetrain.getInstance().setMotorPower(0.1, -0.6);
 						}
 						break;
 					case RIGHT:
@@ -96,7 +96,9 @@ public class Switch extends AutoMode {
 				
 			case 2:
 				Lift.getInstance().actionMoveTo(LiftPosition.SWITCH);
-				Intake.getInstance().actionOpenWhileStowed();
+				if (DriverStation.getInstance().getMatchTime() < 12) {
+					Intake.getInstance().actionOpenWhileStowed();
+				}
 				switch (startPosition) {
 					case LEFT:
 						if (switchPosition == FieldPosition.LEFT) {
@@ -108,9 +110,9 @@ public class Switch extends AutoMode {
 						break;
 					case CENTRE:
 						if (switchPosition == FieldPosition.LEFT) {
-							Drivetrain.getInstance().setMotorPower(0.0, -0.0);
+							Drivetrain.getInstance().setMotorPower(0.2, -0.2);
 						} else if (switchPosition == FieldPosition.RIGHT) {
-							Drivetrain.getInstance().setMotorPower(0.0, -0.0);
+							Drivetrain.getInstance().setMotorPower(0.2, -0.2);
 						}
 						break;
 					case RIGHT:
@@ -185,9 +187,9 @@ public class Switch extends AutoMode {
 						}
 					case CENTRE:
 						if (switchPosition == FieldPosition.LEFT) {
-							return Drivetrain.getInstance().getAngle() >= -20;
+							return Drivetrain.getInstance().getAngle() >= -25;
 						} else if (switchPosition == FieldPosition.RIGHT) {
-							return Drivetrain.getInstance().getAngle() <= 20;
+							return Drivetrain.getInstance().getAngle() <= 25;
 						} else {
 							return true;
 						}

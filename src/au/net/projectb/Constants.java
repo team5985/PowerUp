@@ -48,8 +48,8 @@ public class Constants {
 	
 	public static int kElbowGroundPosition = 0;
 	public static int kElbowSwitchPosition = 2000;
-	public static int kElbowScaleLoPosition = 2;
-	public static int kElbowScaleMiPosition = 3;
+	public static int kElbowScaleLoPosition = 4000;
+	public static int kElbowScaleMiPosition = 5000;
 	public static int kElbowScaleHiPosition = 6000;
 	
 	public static double kPElbow = 2.0; // Theoretical value
@@ -60,6 +60,8 @@ public class Constants {
 	
 	public static int kElbowIllegalPosLowerBound = 100;
 	public static int kElbowIllegalPosUpperBound = 5000;
+	
+	public static double kElbowManualDeadzone = 0.1;
 	
 	public static double kElbowMaxVoltage = 12.0; // +/- of 0
 	public static double kElbowMaxDownwardsVoltage = 6.0; // Stops the arm from smashing into the battery

@@ -4,7 +4,7 @@ import au.net.projectb.subsystems.Drivetrain;
 import au.net.projectb.subsystems.Drivetrain.ThrottlePreset;
 import au.net.projectb.subsystems.Intake;
 import au.net.projectb.subsystems.Lift;
-
+import au.net.projectb.subsystems.Lift.LiftPosition;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.cscore.CvSink;
@@ -80,7 +80,7 @@ public class TeleopController {
 				}
 				
 				//Transition
-				if (stick.getRawButtonPressed(3)) {
+				if (stick.getRawButtonPressed(3) || -xbox.getY(Hand.kRight) > 0.75) {
 					currentState = SuperstructureState.STOWED;
 				}
 				if (lift.getArmIsInIllegalPos()) {
@@ -99,7 +99,7 @@ public class TeleopController {
 				}
 				
 				// Transition
-				if (stick.getRawButtonPressed(3)) {
+				if (stick.getRawButtonPressed(3) || -xbox.getY(Hand.kRight) < 0.75) {
 					currentState = SuperstructureState.INTAKING;
 				}
 				if (lift.getArmIsInIllegalPos()) {
@@ -130,11 +130,44 @@ public class TeleopController {
 		}
 		
 		// Lift Control
-		lift.setElbowPower(-xbox.getY(Hand.kLeft));
+		double xboxElbowManualPower = -xbox.getY(Hand.kLeft);
+		if (Math.abs(xboxElbowManualPower) > Constants.kElbowManualDeadzone) {
+			lift.setElbowPower(-xbox.getY(Hand.kLeft));
+			
+		} else if (xbox.getAButtonPressed()) {
+			lift.setPositionPreset(LiftPosition.GROUND);
+			
+		} else if (xbox.getXButtonPressed() || xbox.getBButtonPressed()) {
+			lift.setPositionPreset(LiftPosition.SWITCH);
+			
+		} else if (xbox.getYButtonPressed()) {
+			switch (xbox.getPOV(0)) {
+				case 0:
+					lift.setPositionPreset(LiftPosition.SCALE_HI);
+					break;
+				case 90:
+					lift.setPositionPreset(LiftPosition.SCALE_MI);
+					break;
+				case 270:
+					lift.setPositionPreset(LiftPosition.SCALE_MI);
+					break;
+				case 180:
+					lift.setPositionPreset(LiftPosition.SCALE_LO);
+					break;
+				default:
+					lift.setPositionPreset(LiftPosition.SCALE_HI);
+					break;
+			}
+		} else {
+			lift.actionMoveToPreset();  // Runs if no new presets have been set or if using manual control. (most of the time)
+		}
 		
 		// Driver's buttons
 		if (stick.getRawButtonPressed(2)) {
 			drive.reverseDirection();
+		}
+		if (stick.getRawButtonPressed(9)) {
+			drive.setThrottlePreset(ThrottlePreset.ANALOGUE);
 		}
 		if (stick.getRawButtonPressed(10)) {
 			drive.setThrottlePreset(ThrottlePreset.LOW);
