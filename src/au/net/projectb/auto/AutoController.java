@@ -44,6 +44,19 @@ public class AutoController {
 		FieldPosition switchPosition;
 		FieldPosition scalePosition;
 		
+		while (DriverStation.getInstance().getGameSpecificMessage() == null) {
+			// wait for it to come in
+			DriverStation.getInstance();
+			DriverStation.reportWarning("AUTO: Game Message null!", false);
+			
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'L') {
 			switchPosition = FieldPosition.LEFT;
 		} else {
