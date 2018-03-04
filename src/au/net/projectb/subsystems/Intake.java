@@ -49,8 +49,8 @@ public class Intake extends Subsystem {
 		mWrist.config_kP(0, Constants.kPWrist, 0);
 		mWrist.config_kI(0, Constants.kIWrist, 0);
 		mWrist.config_kD(0, Constants.kDWrist, 0);
-		mWrist.configPeakOutputForward(Constants.kWristMaxVoltage / 12, 0);
-		mWrist.configPeakOutputReverse(-Constants.kWristMaxVoltage / 12, 0);
+		mWrist.configPeakOutputForward(Constants.kWristMaxUpwardVoltage / 12, 0);
+		mWrist.configPeakOutputReverse(-Constants.kWristMaxDownwardVoltage / 12, 0);
 	}
 	
 	/**

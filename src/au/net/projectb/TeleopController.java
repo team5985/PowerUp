@@ -99,7 +99,7 @@ public class TeleopController {
 				}
 				
 				// Transition
-				if (stick.getRawButtonPressed(3) || -xbox.getY(Hand.kRight) < 0.75) {
+				if (stick.getRawButtonPressed(3) || -xbox.getY(Hand.kRight) < -0.75) {
 					currentState = SuperstructureState.INTAKING;
 				}
 				if (lift.getArmIsInIllegalPos()) {
@@ -131,7 +131,7 @@ public class TeleopController {
 		
 		// Lift Control
 		double xboxElbowManualPower = -xbox.getY(Hand.kLeft);
-		if (Math.abs(xboxElbowManualPower) > Constants.kElbowManualDeadzone) {
+		if (Math.abs(xboxElbowManualPower) > Constants.kElbowManualDeadzone || xbox.getBumper(Hand.kRight)) {
 			lift.setElbowPower(-xbox.getY(Hand.kLeft));
 			
 		} else if (xbox.getAButtonPressed()) {
@@ -159,7 +159,7 @@ public class TeleopController {
 					break;
 			}
 		} else {
-			lift.actionMoveToPreset();  // Runs if no new presets have been set or if using manual control. (most of the time)
+			lift.actionMoveToPreset();  // Runs if no new presets are being set or if using manual control. (most of the time)
 		}
 		
 		// Driver's buttons

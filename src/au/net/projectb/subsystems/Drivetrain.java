@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,7 +21,8 @@ public class Drivetrain extends Subsystem {
 	TalonSRX mLeftMaster, mLeftSlaveA, mLeftSlaveB;
 	TalonSRX mRightMaster, mRightSlaveA, mRightSlaveB;
 	
-	AHRS navx;
+//	AHRS navx;
+	ADXRS450_Gyro navx;  // FIRST Choice gyro, only called navx bc i'm lazy
 	
 	boolean driveDirectionIsForwards;
 	double throttlePreset;
@@ -40,7 +42,8 @@ public class Drivetrain extends Subsystem {
 	}
 	
 	private Drivetrain() {
-		navx = new AHRS(Port.kMXP);
+//		navx = new AHRS(Port.kMXP);
+		navx = new ADXRS450_Gyro();
 		navx.reset();
 		
 		// Left Side
@@ -98,14 +101,16 @@ public class Drivetrain extends Subsystem {
 		if (throttlePreset != -1) {
 			throttle = throttlePreset;
 		}
-		if (!driveDirectionIsForwards) {
-			throttle = -throttle;
-			steering = -steering;
-		}
+		
 		double leftPower = (power + steering) * throttle;
 		double rightPower = (power - steering) * throttle;
-		setMotorPower(leftPower, rightPower);
 		
+		if (driveDirectionIsForwards) {
+			setMotorPower(leftPower, rightPower);
+		} else {
+			setMotorPower(-rightPower, -leftPower);  // Reverses steering and direction
+		}
+				
 		SmartDashboard.putNumber("Throttle", throttle);
 		SmartDashboard.putNumber("LeftPower", leftPower);
 		SmartDashboard.putNumber("RightPower", rightPower);

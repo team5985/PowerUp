@@ -31,7 +31,7 @@ public class Constants {
 	// Intake Wrist
 	// Encoder is on output shaft. Positive is outwards.
 	public static int kWristUpPosition = -200;
-	public static int kWristDnPosition = 1200;
+	public static int kWristDnPosition = 1100;
 	
 	public static double kPWrist = 1.2;
 	public static double kIWrist = 0.0;
@@ -40,7 +40,8 @@ public class Constants {
 	public static int kWristErrorWindow = 60; // TODO: Check this
 	public static int kWristMoveDelay = 10; // Delay from moving the claw to moving the wrist (or vice-versa), in 0.02 seconds (50hz)
 	
-	public static double kWristMaxVoltage = 10.0;
+	public static double kWristMaxUpwardVoltage = 10.0;
+	public static double kWristMaxDownwardVoltage = 5.0;
 	
 	// Lift Elbow
 	// Has a 84:18 gear reduction after encoder. Positive is outwards.
@@ -63,8 +64,8 @@ public class Constants {
 	
 	public static double kElbowManualDeadzone = 0.1;
 	
-	public static double kElbowMaxVoltage = 12.0; // +/- of 0
-	public static double kElbowMaxDownwardsVoltage = 6.0; // Stops the arm from smashing into the battery
+	public static double kElbowMaxUpwardVoltage = 12.0; // +/- of 0
+	public static double kElbowMaxDownwardVoltage = 6.0; // Stops the arm from smashing into the battery
 	
 	// Drive Settings
 	public static double kDriveVoltageRamp = 0.125;

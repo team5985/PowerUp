@@ -28,7 +28,7 @@ public class Tuning {
 		// Bobcat
 		// Inputs
 		SmartDashboard.setDefaultNumber("Max Voltage", 0.0);
-		Constants.kElbowMaxVoltage = SmartDashboard.getNumber("Max Voltage", 0.0);
+		Constants.kElbowMaxUpwardVoltage = SmartDashboard.getNumber("Max Voltage", 0.0);
 		
 		SmartDashboard.setDefaultNumber("Kp, Elbow", 0);
 		Constants.kPElbow = SmartDashboard.getNumber("Kp, Elbow", 0);

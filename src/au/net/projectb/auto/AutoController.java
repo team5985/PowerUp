@@ -1,6 +1,5 @@
 package au.net.projectb.auto;
 
-import au.net.projectb.auto.modes.AutoMode;
 import au.net.projectb.subsystems.Drivetrain;
 import au.net.projectb.auto.modes.*;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -9,8 +8,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class AutoController {
 	SendableChooser<FieldPosition> startSelector;
-	SendableChooser<AutoMode> autoSelector;
-	AutoMode selectedAuto;
+	SendableChooser<AutoSelection> autoSelector;
+	
+	FieldPosition startPosition;
+	FieldPosition switchPosition;
+	FieldPosition scalePosition;
+	
+	AutoSelection selectedAuto;
+	AutoMode runningAuto;
 	int currentStep;
 	
 	public enum FieldPosition {
@@ -18,6 +23,16 @@ public class AutoController {
 		CENTRE,
 		RIGHT,
 		DEFAULT
+	}
+	
+	public enum AutoSelection {
+		AUTO_LINE,
+		
+		ONLY_SWITCH,
+		ONLY_SCALE,
+		
+		PREFER_SWITCH,
+		PREFER_SCALE,
 	}
 	
 	public AutoController() {
@@ -28,21 +43,19 @@ public class AutoController {
 		startSelector.addObject("Right", FieldPosition.RIGHT);
 		SmartDashboard.putData("Start Position Selector", startSelector);
 		
-		autoSelector = new SendableChooser<AutoMode>();		
-		autoSelector.addDefault("Default", new Default());
-		autoSelector.addObject("Switch", new Switch());
-		autoSelector.addObject("Scale", new Scale());
+		autoSelector = new SendableChooser<AutoSelection>();	
 		// Various auto modes
+		autoSelector.addDefault("Auto Line", AutoSelection.AUTO_LINE);
+		autoSelector.addObject("Prefer Switch", AutoSelection.PREFER_SWITCH);
+		autoSelector.addObject("Prefer Scale", AutoSelection.PREFER_SCALE);
+		autoSelector.addObject("Switch", AutoSelection.ONLY_SWITCH);
+		autoSelector.addObject("Scale", AutoSelection.ONLY_SCALE);
+		
 		SmartDashboard.putData("Auto Selector", autoSelector);
 	}
 	
 	public void init() {
 		Drivetrain.getInstance().zeroGyro();
-		
-		selectedAuto = autoSelector.getSelected();
-		
-		FieldPosition switchPosition;
-		FieldPosition scalePosition;
 		
 		while (DriverStation.getInstance().getGameSpecificMessage() == null) {
 			// wait for it to come in
@@ -57,27 +70,133 @@ public class AutoController {
 			}
 		}
 		
-		if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'L') {
+		// Define field positions
+		startPosition = startSelector.getSelected();
+		
+		if (DriverStation.getInstance().getGameSpecificMessage().charAt(0) == 'L') {  // Switch
 			switchPosition = FieldPosition.LEFT;
 		} else {
 			switchPosition = FieldPosition.RIGHT;
 		}		
-		if (DriverStation.getInstance().getGameSpecificMessage().charAt(1) == 'L') {
+		if (DriverStation.getInstance().getGameSpecificMessage().charAt(1) == 'L') {  // Scale
 			scalePosition = FieldPosition.LEFT;
 		} else {
 			scalePosition = FieldPosition.RIGHT;
 		}
 		
-		selectedAuto.setFieldPositions(startSelector.getSelected(), switchPosition, scalePosition);
+		selectedAuto = autoSelector.getSelected();
+		runningAuto = evaluateAutoSelection(selectedAuto);
+		
+		runningAuto.setFieldPositions(startPosition, switchPosition, scalePosition);
 		currentStep = 0;
 	}
 	
 	public void run() {
 		// getStepIsCompleted default returns false.
-		if (!selectedAuto.getStepIsCompleted(currentStep)) {
-			selectedAuto.runStep(currentStep);
+		if (!runningAuto.getStepIsCompleted(currentStep)) {
+			runningAuto.runStep(currentStep);
 		} else {
 			currentStep++;
 		}
+	}
+	
+	/**
+	 * 
+	 * @param auto
+	 * @return
+	 */
+	public AutoMode evaluateAutoSelection(AutoSelection auto) {
+		switch (auto) {
+			case PREFER_SWITCH:
+				if (switchPosition == startPosition) {
+					if (switchPosition == FieldPosition.LEFT) {
+						return new LeftSwitchLeft();
+					} else {
+						return new RightSwitchRight();
+					}
+				
+				} else if (startPosition == FieldPosition.CENTRE) {
+					if (switchPosition == FieldPosition.LEFT) {
+						return new CentreSwitchLeft();
+					} else {
+						return new CentreSwitchRight();
+					}
+				
+				} else if (scalePosition == startPosition) {
+					if (scalePosition == FieldPosition.LEFT) {
+						return new LeftScaleLeft();
+					} else {
+						return new RightScaleRight();
+					}
+				} else {
+					return new Default();
+				}
+				
+			case PREFER_SCALE:
+				if (scalePosition == startPosition) {
+					if (switchPosition == FieldPosition.LEFT) {
+						return new LeftScaleLeft();
+					} else {
+						return new RightScaleRight();
+					}
+				
+				} else if (startPosition == FieldPosition.CENTRE) {
+					if (switchPosition == FieldPosition.LEFT) {
+						return new CentreSwitchLeft();
+					} else {
+						return new CentreSwitchRight();
+					}
+				
+				} else if (switchPosition == startPosition) {
+					if (switchPosition == FieldPosition.LEFT) {
+						return new LeftSwitchLeft();
+					} else {
+						return new RightSwitchRight();
+					}
+				} else {
+					return new Default();
+				}
+				
+			case ONLY_SWITCH:
+				if (switchPosition == startPosition) {
+					if (switchPosition == FieldPosition.LEFT) {
+						return new LeftSwitchLeft();
+					} else {
+						return new RightSwitchRight();
+					}
+				
+				} else if (startPosition == FieldPosition.CENTRE) {
+					if (switchPosition == FieldPosition.LEFT) {
+						return new CentreSwitchLeft();
+					} else {
+						return new CentreSwitchRight();
+					}
+				} else {
+					return new Default();
+				}
+				
+			case ONLY_SCALE:
+				if (scalePosition == startPosition) {
+					if (scalePosition == FieldPosition.LEFT) {
+						return new LeftScaleLeft();
+					} else {
+						return new RightScaleRight();
+					}
+				
+				} else {
+					return new Default();
+				}
+				
+			default:
+				return new Default();
+		}
+	}
+	
+	/**
+	 * Returns the amount of time elapsed since the start of the game period.
+	 * @return seconds
+	 */
+	public double getElapsedTime() {
+		return 15 - DriverStation.getInstance().getMatchTime();
 	}
 }

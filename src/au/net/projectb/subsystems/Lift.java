@@ -66,8 +66,8 @@ public class Lift extends Subsystem {
 		mElbow.config_kP(0, Constants.kPElbow, 0);
 		mElbow.config_kI(0, Constants.kIElbow, 0);
 		mElbow.config_kD(0, Constants.kDElbow, 0);
-		mElbow.configPeakOutputForward(Constants.kElbowMaxVoltage / 12, 0);
-		mElbow.configPeakOutputReverse(-Constants.kElbowMaxDownwardsVoltage / 12, 0);
+		mElbow.configPeakOutputForward(Constants.kElbowMaxUpwardVoltage / 12, 0);
+		mElbow.configPeakOutputReverse(-Constants.kElbowMaxDownwardVoltage / 12, 0);
 	}
 	
 	/**
